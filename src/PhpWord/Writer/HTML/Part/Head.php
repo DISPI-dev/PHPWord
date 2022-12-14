@@ -32,6 +32,9 @@ use PhpOffice\PhpWord\Writer\HTML\Style\Paragraph as ParagraphStyleWriter;
  */
 class Head extends AbstractPart
 {
+
+    public $cssPrefix = '.annualreport-html-holder ';
+
     /**
      * Write part.
      *
@@ -84,26 +87,26 @@ class Head extends AbstractPart
 
         // Default styles
         $defaultStyles = [
-            '*' => [
+            $this->cssPrefix.' *' => [
                 'font-family' => Settings::getDefaultFontName(),
                 'font-size' => Settings::getDefaultFontSize() . 'pt',
             ],
-            'a.NoteRef' => [
+            $this->cssPrefix.' a.NoteRef' => [
                 'text-decoration' => 'none',
             ],
-            'hr' => [
+            $this->cssPrefix.' hr' => [
                 'height' => '1px',
                 'padding' => '0',
                 'margin' => '1em 0',
                 'border' => '0',
                 'border-top' => '1px solid #CCC',
             ],
-            'table' => [
+            $this->cssPrefix.' table' => [
                 'border' => '1px solid black',
                 'border-spacing' => '0px',
                 'width ' => '100%',
             ],
-            'td' => [
+            $this->cssPrefix.' td' => [
                 'border' => '1px solid black',
             ],
         ];
@@ -123,11 +126,11 @@ class Head extends AbstractPart
                     } else {
                         $name = '.' . $name;
                     }
-                    $css .= "{$name} {" . $styleWriter->write() . '}' . PHP_EOL;
+                    $css .= $this->cssPrefix." {$name} {" . $styleWriter->write() . '}' . PHP_EOL;
                 } elseif ($style instanceof Paragraph) {
                     $styleWriter = new ParagraphStyleWriter($style);
                     $name = '.' . $name;
-                    $css .= "{$name} {" . $styleWriter->write() . '}' . PHP_EOL;
+                    $css .= $this->cssPrefix." {$name} {" . $styleWriter->write() . '}' . PHP_EOL;
                 }
             }
         }

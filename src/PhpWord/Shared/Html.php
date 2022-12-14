@@ -280,7 +280,13 @@ class Html
             return $element->addPageBreak();
         }
 
-        return $element->addTextRun($styles['paragraph']);
+        /**
+         * Force PhpWord to use the default Paragraph style on every HTML Paragraph node instead of the inline Paragraph style attribute.
+         * This way we keep the output consistent with the rest of the output.
+         * The default styling is set in the Captain\Model\Finance\Classes\Annualreport\Generator\Elements in the Constructor.
+         */
+        return $element->addTextRun(\PhpOffice\PhpWord\Style::getStyle('Normal'));
+        //return $element->addTextRun($styles['paragraph']);
     }
 
     /**

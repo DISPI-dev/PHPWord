@@ -270,21 +270,55 @@ class Chart extends AbstractPart
                 $this->writeSeriesItem($xmlWriter, 'cat', $categories);
                 $this->writeSeriesItem($xmlWriter, 'val', $values);
 
-                // check that there are colors
-                if (is_array($colors) && count($colors) > 0) {
-                    // assign a color to each value
-                    $valueIndex = 0;
-                    for ($i = 0; $i < count($values); $i++) {
-                        // check that there are still enought colors
-                        $xmlWriter->startElement('c:dPt');
-                        $xmlWriter->writeElementBlock('c:idx', 'val', $valueIndex);
+                /**
+                 * With the standard current version of PHPOffice/PHPWord we it was only able to color the pie chart.
+                 * The Pie charts has one serie with multiple values, each values gets a assinged color. 
+                 * 
+                 * But a area chart might have multiple series with multiple values, in this case we want to assign colors to the series instead of the values.
+                 * 
+                 * I also added transparency to the colors, this is not supported by PHPOffice/PHPWord yet.
+                 * The transparancy is currently hardcoded to 75%. Maybe this should be configurable in the future.
+                 */
+
+                // The area recieves a color for each series instead of each value
+                if ($this->options['type'] === 'area') {
+                    // check that there are colors
+                    if (is_array($colors) && count($colors) > 0) {
+                        // assign a color to each value
+                        $color = $colorIndex++ % count($colors);
+
                         $xmlWriter->startElement('c:spPr');
                         $xmlWriter->startElement('a:solidFill');
-                        $xmlWriter->writeElementBlock('a:srgbClr', 'val', $colors[$colorIndex++ % count($colors)]);
+                        $xmlWriter->startElement('a:srgbClr');
+                        $xmlWriter->writeAttribute('val', $colors[$color]);
+                        $xmlWriter->writeElementBlock('a:alpha', 'val', 25000);
+                        $xmlWriter->endElement(); // a:srgbClr
                         $xmlWriter->endElement(); // a:solidFill
-                        $xmlWriter->endElement(); // c:spPr
-                        $xmlWriter->endElement(); // c:dPt
-                        $valueIndex++;
+                        $xmlWriter->startElement('a:ln');
+                        $xmlWriter->writeAttribute('w', 19050);
+                        $xmlWriter->startElement('a:solidFill');
+                        $xmlWriter->writeElementBlock('a:srgbClr', 'val', $colors[$color]);
+                        $xmlWriter->endElement(); // a:solidFill
+                        $xmlWriter->endElement(); // a:ln
+                        $xmlWriter->endElement(); // c:spPr                        
+                    }
+                } else {
+                    // check that there are colors
+                    if (is_array($colors) && count($colors) > 0) {
+                        // assign a color to each value
+                        $valueIndex = 0;
+                        for ($i = 0; $i < count($values); $i++) {
+                            // check that there are still enought colors
+                            $xmlWriter->startElement('c:dPt');
+                            $xmlWriter->writeElementBlock('c:idx', 'val', $valueIndex);
+                            $xmlWriter->startElement('c:spPr');
+                            $xmlWriter->startElement('a:solidFill');
+                            $xmlWriter->writeElementBlock('a:srgbClr', 'val', $colors[$colorIndex++ % count($colors)]);
+                            $xmlWriter->endElement(); // a:solidFill
+                            $xmlWriter->endElement(); // c:spPr
+                            $xmlWriter->endElement(); // c:dPt
+                            $valueIndex++;
+                        }
                     }
                 }
             }

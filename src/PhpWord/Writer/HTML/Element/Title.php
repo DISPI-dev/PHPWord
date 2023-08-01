@@ -49,7 +49,11 @@ class Title extends AbstractElement
             $text = $writer->write();
         }
 
-        $content = "<{$tag}>{$text}</{$tag}>" . PHP_EOL;
+        /**
+         * Make titles clickable with fragment identifiers, this way we can make a link between a builder and the preview.
+         * It works both ways, from the builder to the preview and from the preview to the builder because of the id={$text} and href=#el{$text}.
+         */
+        $content = "<{$tag} id='{$text}'><a href='#el{$text}'>{$text}</a></{$tag}>" . PHP_EOL;
 
         return $content;
     }

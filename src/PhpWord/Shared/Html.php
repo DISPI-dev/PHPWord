@@ -262,7 +262,13 @@ class Html
     protected static function parseParagraph($node, $element, &$styles)
     {
         $styles['paragraph'] = self::recursiveParseStylesInHierarchy($node, $styles['paragraph']);
-        $newElement = $element->addTextRun($styles['paragraph']);
+        /**
+         * Force PhpWord to use the default Paragraph style on every HTML Paragraph node instead of the inline Paragraph style attribute.
+         * This way we keep the output consistent with the rest of the output.
+         * The default styling is set in the Captain\Model\Finance\Classes\Annualreport\Generator\Elements in the Constructor.
+         */
+        $newElement = $element->addTextRun(\PhpOffice\PhpWord\Style::getStyle('Normal'));
+        //$newElement = $element->addTextRun($styles['paragraph']);
 
         return $newElement;
     }

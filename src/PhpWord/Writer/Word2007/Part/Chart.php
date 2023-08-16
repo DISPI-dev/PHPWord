@@ -302,6 +302,20 @@ class Chart extends AbstractPart
                         $xmlWriter->endElement(); // a:ln
                         $xmlWriter->endElement(); // c:spPr                        
                     }
+                } elseif ($this->options['type'] === 'bar') {
+                    // check that there are colors
+                    if (is_array($colors) && count($colors) > 0) {
+                        // assign a color to each value
+                        $color = $colorIndex++ % count($colors);
+                        $xmlWriter->writeComment('column');
+                        $xmlWriter->startElement('c:spPr');
+                        $xmlWriter->startElement('a:solidFill');
+                        $xmlWriter->startElement('a:srgbClr');
+                        $xmlWriter->writeAttribute('val', $colors[$color]);
+                        $xmlWriter->endElement(); // a:srgbClr
+                        $xmlWriter->endElement(); // a:solidFill
+                        $xmlWriter->endElement(); // c:spPr                        
+                    }
                 } else {
                     // check that there are colors
                     if (is_array($colors) && count($colors) > 0) {

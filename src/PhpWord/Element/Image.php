@@ -448,7 +448,7 @@ class Image extends AbstractElement
         } elseif (filter_var($this->source, FILTER_VALIDATE_URL) !== false) {
             $this->memoryImage = true;
             if (strpos($this->source, 'https') === 0) {
-                $fileContent = file_get_contents($this->source);
+                $fileContent = @file_get_contents($this->source);
                 $this->source = $fileContent;
                 $this->sourceType = self::SOURCE_STRING;
             } else {
